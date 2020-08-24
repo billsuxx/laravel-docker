@@ -10,7 +10,7 @@ services:
     networks:
       - staff
 
-  webserver:
+  nginx:
     image: nginx:alpine
     restart: unless-stopped
     tty: true
@@ -42,7 +42,7 @@ services:
     environment:
      - MYSQL_USER=docker
      - MYSQL_PASSWORD=docker
-     - MYSQL_DATABASE=f1-staff
+     - MYSQL_DATABASE=project
      - MYSQL_ROOT_PASSWORD=root
     volumes:
       - dbdata:/var/lib/mysql/
