@@ -1,0 +1,60 @@
+version: "3.5"
+services:
+
+  php:
+    build: dev-tools/docker/php
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www
+    networks:
+      - staff
+
+  webserver:
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./dev-tools/docker/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - staff
+
+  node:
+    image: node:13.7
+    volumes:
+      - ./:/var/www
+    working_dir: /var/www
+    entrypoint: ['npm']
+
+  mysql:
+    build: dev-tools/docker/mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+     - MYSQL_USER=docker
+     - MYSQL_PASSWORD=docker
+     - MYSQL_DATABASE=f1-staff
+     - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./dev-tools/docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - staff
+
+networks:
+  staff:
+    name: staff.local
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
