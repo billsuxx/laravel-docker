@@ -24,14 +24,15 @@ services:
       - php
       - mysql
     networks:
-      - staff
+      staff:
+        aliases: [ www ]
 
   node:
     image: node:13.7
     volumes:
       - ./:/var/www
     working_dir: /var/www
-    entrypoint: ['npm']
+    command: sleep infinity
 
   mysql:
     build: dev-tools/docker/mysql
